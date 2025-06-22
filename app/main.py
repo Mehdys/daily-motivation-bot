@@ -61,25 +61,29 @@ def generate_motivational_quote() -> str:
     day_of_year = today.timetuple().tm_yday  # Day of year (1-365) for variety
     
     system_prompt = (
-        "Tu es un expert en citations motivationnelles célèbres. "
+        "Tu es un expert en citations motivationnelles ultra-positives et énergisantes. "
         "Tu connais les meilleures citations de personnalités inspirantes : "
         "Nelson Mandela, Steve Jobs, Oprah Winfrey, Albert Einstein, Maya Angelou, "
-        "Winston Churchill, Marie Curie, et bien d'autres. "
-        "Tu adaptes ces citations en français de manière naturelle et inspirante."
+        "Tony Robbins, Les Brown, et bien d'autres. "
+        "Tu adaptes ces citations en français de manière naturelle, énergique et ultra-positive. "
+        "Tu ne mentionnes JAMAIS de termes négatifs comme échec, difficulté, problème, obstacle, peur, doute, etc. "
+        "Tu te concentres uniquement sur la positivité, l'énergie, le succès, la force, la joie, la détermination."
     )
     
     user_prompt = (
         f"Nous sommes le {date_str} (jour {day_of_year} de l'année). "
-        "Génère UNE SEULE citation motivationnelle célèbre en français. "
+        "Génère UNE SEULE citation motivationnelle ultra-positive et énergisante en français. "
         "Contraintes strictes :\n"
         "- Maximum 200 caractères\n"
-        "- Citation d'une personnalité célèbre (auteur, entrepreneur, leader, etc.)\n"
-        "- Style inspirant, puissant, mais accessible\n"
+        "- Citation d'une personnalité célèbre (auteur, entrepreneur, leader, coach, etc.)\n"
+        "- Style ultra-positif, énergique, puissant, motivant pour démarrer la journée\n"
         "- Format : Citation suivie de \"— Nom de l'auteur\"\n"
-        "- Exemple : \"Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. — Winston Churchill\"\n"
+        "- INTERDICTION ABSOLUE de mentionner : échec, difficulté, problème, obstacle, peur, doute, négativité, défis négatifs\n"
+        "- Seulement des messages sur : succès, force, énergie, détermination, joie, passion, victoire, excellence, croissance, possibilités infinies\n"
+        "- Exemple positif : \"Crois en tes rêves et ils se réaliseront. L'énergie suit l'intention. — Tony Robbins\"\n"
         "- Ne pas répéter les mêmes citations chaque jour (utilise la date pour varier)\n"
         "- Pas de guillemets autour de la citation complète\n"
-        "- 1 emoji max si approprié"
+        "- 1-2 emojis énergiques si approprié (💪 ✨ 🚀 ⭐)"
     )
     
     url = "https://api.groq.com/openai/v1/chat/completions"
