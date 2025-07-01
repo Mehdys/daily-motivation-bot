@@ -52,6 +52,12 @@ class Settings:
             print(f"⚠️  WARNING: Missing required environment variables: {', '.join(missing_vars)}")
         else:
             print("✅ All required environment variables are set")
+    
+    @classmethod
+    def is_valid(cls) -> bool:
+        """Check if all required configuration is valid."""
+        required_vars = cls.get_required_vars()
+        return all(value is not None for value in required_vars.values())
 
 
 # Initialize settings and validate on import
