@@ -112,6 +112,9 @@ class GroqClient:
             print(f"✨ Generated quote: {quote}")
             return quote
             
+        except requests.exceptions.Timeout:
+            print("❌ Groq API request timed out")
+            raise Exception("Request to Groq API timed out. Please try again.")
         except requests.exceptions.RequestException as e:
             print(f"❌ Error calling Groq API: {e}")
             raise Exception(f"Failed to generate quote: {str(e)}")
