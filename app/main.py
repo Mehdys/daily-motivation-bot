@@ -14,8 +14,10 @@ from app.templates.email_templates import EmailTemplateBuilder
 # Initialize FastAPI app
 app = FastAPI(
     title="Daily Motivation Bot API",
-    version="1.0.0",
-    description="API for sending daily AI-generated motivational quotes via email"
+    version="1.0.1",
+    description="API for sending daily AI-generated motivational quotes via email",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 
