@@ -33,7 +33,13 @@ pip install -r requirements.txt
 
 ### 2. Set Up Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (you can copy from `.env.example`):
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` with your actual values:
 
 ```env
 SMTP_HOST=smtp.mail.yahoo.com
