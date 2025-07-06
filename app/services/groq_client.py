@@ -2,12 +2,12 @@
 Groq API client for generating motivational quotes.
 """
 
-from datetime import datetime
 from typing import Optional
 
 import requests
 
 from app.config import settings
+from app.utils import get_french_date_info, sanitize_quote
 
 
 class GroqClient:
@@ -38,9 +38,7 @@ class GroqClient:
     
     def _build_user_prompt(self) -> str:
         """Build the user prompt with current date for variety."""
-        today = datetime.now()
-        date_str = today.strftime("%d %B %Y")
-        day_of_year = today.timetuple().tm_yday
+        date_str, day_of_year = get_french_date_info()
         
         return (
             f"Nous sommes le {date_str} (jour {day_of_year} de l'année). "
@@ -58,17 +56,6 @@ class GroqClient:
             "- 1-2 emojis énergiques si approprié (💪 ✨ 🚀 ⭐)"
         )
     
-    def _clean_quote(self, quote: str) -> str:
-        """Remove surrounding quotes from the generated quote."""
-        quote = quote.strip()
-        
-        # Remove surrounding quotes if present
-        if quote.startswith('"') and quote.endswith('"'):
-            quote = quote[1:-1]
-        if quote.startswith("'") and quote.endswith("'"):
-            quote = quote[1:-1]
-        
-        return quote.strip()
     
     def generate_quote(self) -> str:
         """
@@ -107,7 +94,7 @@ class GroqClient:
             
             data = response.json()
             quote = data["choices"][0]["message"]["content"]
-            quote = self._clean_quote(quote)
+            quote = sanitize_quote(quote)
             
             print(f"✨ Generated quote: {quote}")
             return quote
