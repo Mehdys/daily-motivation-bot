@@ -11,7 +11,16 @@ services:
       - key: SMTP_HOST
         value: smtp.mail.yahoo.com
       - key: SMTP_PORT
-        value: 587
-      # Note: Set these in Render dashboard after deployment:
-      # SMTP_USER, SMTP_PASSWORD, GIRLFRIEND_EMAIL, SENDER_NAME, GROQ_API_KEY
+        value: "587"
+      - key: RECIPIENT_EMAILS
+        value: mehdigribaa10@yahoo.com,raniachemli07@gmail.com
+      - key: SENDER_NAME
+        value: Mehdi ❤️
+      # Note: Set these secrets in Render dashboard after deployment:
+      # SMTP_USER, SMTP_PASSWORD, GROQ_API_KEY
+
+  # Note: Cron job must be created manually in Render dashboard
+  # Schedule: 30 5 * * * (06:30 Europe/Paris = 05:30 UTC)
+  # Command: curl -X POST "https://YOUR-SERVICE-URL.onrender.com/send-daily-love-email" -H "Content-Type: application/json" -d '{}'
+  # Replace YOUR-SERVICE-URL with your actual Render service URL
 

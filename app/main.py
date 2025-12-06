@@ -14,7 +14,7 @@ from app.templates.email_templates import EmailTemplateBuilder
 # Initialize FastAPI app
 app = FastAPI(
     title="Daily Motivation Bot API",
-    version="1.0.1",
+    version="1.0.2",
     description="API for sending daily AI-generated motivational quotes via email",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -36,25 +36,34 @@ async def root():
 async def send_daily_motivation_email(request: TriggerRequest):
     """
     Generate a motivational quote and send it via email.
+    If to_email is provided, sends to that address only.
+    Otherwise, sends to all configured recipients.
+    
+    This endpoint is designed to be called by Render Cron Job for serverless execution.
     
     Args:
         request: Request body with optional to_email override
         
     Returns:
-        EmailResponse: Status, recipient email, and generated quote
+        EmailResponse: Status, recipient email(s), and generated quote
         
     Raises:
         HTTPException: If email address is missing or sending fails
     """
     try:
-        # Determine recipient email
-        to_email = request.to_email or settings.GIRLFRIEND_EMAIL
+        # Determine recipient emails
+        if request.to_email:
+            recipient_emails = [request.to_email]
+        else:
+            recipient_emails = settings.get_recipient_emails()
         
-        if not to_email:
+        if not recipient_emails:
             raise HTTPException(
                 status_code=400,
-                detail="No recipient email found. Provide to_email in request or set GIRLFRIEND_EMAIL env var."
+                detail="No recipient email found. Provide to_email in request or set RECIPIENT_EMAILS env var."
             )
+        
+        print(f"📧 Sending emails to: {', '.join(recipient_emails)}")
         
         # Generate motivational quote
         groq_client = get_groq_client()
@@ -64,18 +73,36 @@ async def send_daily_motivation_email(request: TriggerRequest):
         html_body = EmailTemplateBuilder.build_motivational_email(quote)
         subject = "Ta citation motivationnelle du jour 💪"
         
-        # Send email
+        # Send email to all recipients
         email_service = get_email_service()
-        email_service.send_email(
-            subject=subject,
-            plain_body=quote,
-            html_body=html_body,
-            to_email=to_email
-        )
+        sent_to_list = []
+        
+        for email in recipient_emails:
+            try:
+                email_service.send_email(
+                    subject=subject,
+                    plain_body=quote,
+                    html_body=html_body,
+                    to_email=email
+                )
+                sent_to_list.append(email)
+                print(f"✅ Email sent successfully to {email}")
+            except Exception as e:
+                print(f"❌ Failed to send email to {email}: {e}")
+        
+        if not sent_to_list:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to send email to any recipient"
+            )
+        
+        sent_to_str = ", ".join(sent_to_list) if len(sent_to_list) > 1 else sent_to_list[0]
+        
+        print(f"📊 Sent {len(sent_to_list)}/{len(recipient_emails)} emails successfully")
         
         return EmailResponse(
             status="ok",
-            sent_to=to_email,
+            sent_to=sent_to_str,
             quote=quote
         )
         
